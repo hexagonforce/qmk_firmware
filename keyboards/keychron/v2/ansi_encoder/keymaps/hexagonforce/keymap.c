@@ -55,7 +55,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         RGB_TOG, RGB_MOD,  RGB_VAI,  RGB_HUI, RGB_SAI, RGB_SPI, _______, _______, _______, _______, _______,  _______,  _______,  _______,          _______,
         _______, RGB_RMOD, RGB_VAD,  RGB_HUD, RGB_SAD, RGB_SPD, _______, _______, _______, _______, _______,  _______,            _______,          _______,
         _______,           _______,  _______, _______, _______, _______, NK_TOGG, _______, _______, _______,  _______,            _______, _______,
-        _______, _______,  _______,                             _______,                            _______,  _______,  _______,  _______, _______, _______),
+        _______, _______,  _______,                             _______,                            KC_RALT,  _______,  _______,  _______, _______, _______),
 
     [_FN3] = LAYOUT_ansi_67(
         _______, KC_F1,    KC_F2,    KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,   KC_F11,   KC_F12,   _______,          _______,
@@ -65,26 +65,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______, _______,  _______,                             _______,                            _______,  _______,  _______,  _______, _______, _______)
 };
 
-/*layer_state_t layer_state_set_user(layer_state_t state) {
-    switch (get_highest_layer(state)) {
-    case MAC_BASE:
-        rgblight_sethsv(240, 100, 100);
-        break;
-    case WIN_BASE:
-        rgblight_sethsv(0, 100, 100);
-        break;
-    case _FN1:
-        rgblight_sethsv(0, 0, 100);
-        break;
-    case _FN2:
-        rgblight_sethsv(60, 100, 100);
-        break;
-    default:
-        rgblight_sethsv (60, 100, 100);
-        break;
-    }
-    return state;
-}*/
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 	switch (keycode) {
 	case TG(_FN1): // this runs when TG(LAYER1) is pressed (the key to toggle layer 1 on)
@@ -97,12 +77,36 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 	return true;
 };
 
+bool rgb_matrix_indicators_user(void) {
+    uint8_t current_layer = get_highest_layer(layer_state);
+    switch (current_layer) {
+        case MAC_BASE:
+            rgb_matrix_set_color_all(0x00, 0xFF, 0xFF);  // RGB blue
+            break;
+        case WIN_BASE:
+            rgb_matrix_set_color_all(0x00, 0xFF, 0xFF);  // RGB blue
+            break;
+        case _FN1:
+            rgb_matrix_set_color_all(0xFF, 0xa5, 0x00);  // RGB orange
+            break;
+        case _FN2:
+            rgb_matrix_set_color_all(0x00, 0xFF, 0x00);  // RGB green
+            break;
+        case _FN3:
+            rgb_matrix_set_color_all(0x00, 0xFF, 0x00);  // RGB green
+            break;
+        default:
+            break;
+    }
+    return false;
+}
+
 #if defined(ENCODER_MAP_ENABLE)
 const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
     [MAC_BASE] = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU)},
     [WIN_BASE] = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU)},
     [_FN1]   = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU)},
-    [_FN2]   = { ENCODER_CCW_CW(_______, _______)},
+    [_FN2]   = { ENCODER_CCW_CW(RGB_VAD, RGB_VAI)},
     [_FN3]   = { ENCODER_CCW_CW(RGB_VAD, RGB_VAI)}
 };
 #endif // ENCODER_MAP_ENABLE
